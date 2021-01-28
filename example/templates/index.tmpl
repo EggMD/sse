@@ -1,0 +1,39 @@
+<html>
+<head>
+    <title>System Stat</title>
+    <script src="https://cdn.jsdelivr.net/npm/way-js@0.2.1/dist/way.js"></script>
+</head>
+
+<h1>System Stat</h1>
+
+<h2>CPU</h2>
+<div way-repeat="cpus">
+    <span way-data="cpu"></span> -
+    <b>User: </b><span way-data="user"></span>
+    <b>System: </b><span way-data="system"></span>
+    <b>Idel: </b><span way-data="idle"></span>
+</div>
+
+<h2>Memory</h2>
+<p> Memory Used
+    <span way-data="memory-used"></span>
+    %
+</p>
+<p>Total Memory:
+    <span way-data="total-memory"></span> bytes
+</p>
+<p>Free Memory:
+    <span way-data="free-memory"></span> bytes
+</p>
+
+<script>
+    let es = new EventSource("/stat");
+    es.onmessage = (evt) => {
+        let stat = JSON.parse(evt.data);
+        way.set('memory-used', stat.UsedMemoryPercent.toFixed(2))
+        way.set('total-memory', stat.TotalMemory)
+        way.set('free-memory', stat.FreeMemory)
+        way.set('cpus', stat.CpuStats)
+    };
+</script>
+</html>
